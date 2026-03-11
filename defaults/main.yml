@@ -2,3 +2,5 @@
 vscode_user:
 vscode_keybindings:
 vscode_settings:
+vscode_apt_repo_template: microsoft-vscode.sources.j2
+vscode_apt_repo_key_dst: /usr/share/keyrings/microsoft-vscode.gpg

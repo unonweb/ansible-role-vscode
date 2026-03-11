@@ -5,29 +5,29 @@
   block:
   
   # mkdir
-  - name: Make sure directory /etc/apt/keyrings exists
+  - name: Make sure directory exists {{ vscode_apt_repo_key_dst | dirname }}
     become: true
     ansible.builtin.file:
-      path: "/etc/apt/keyrings"
+      path: "{{ vscode_apt_repo_key_dst | dirname }}"
       mode: u=rwx,g=rx,o=rx
       state: directory
       
   # repo key
-  - name: Copy repo key
+  - name: Copy repo key to {{ vscode_apt_repo_key_dst }}
     become: true
     ansible.builtin.copy:
       src: microsoft-vscode.gpg
-      dest: "/etc/apt/keyrings/microsoft-vscode.gpg"
+      dest: "{{ vscode_apt_repo_key_dst }}"
       owner: root
       group: root
       mode: u=rw,g=r,o=r
 
-  # repo file
-  - name: Copy microsoft repo file
+  # template repo file
+  - name: Template repo file to /etc/apt/sources.list.d/{{ vscode_apt_repo_template.replace('.j2', '') }}
     become: true
-    ansible.builtin.copy:
-      src: microsoft-vscode.list
-      dest: /etc/apt/sources.list.d/microsoft-vscode.list
+    ansible.builtin.template:
+      src: "{{ vscode_apt_repo_template }}"
+      dest: "/etc/apt/sources.list.d/{{ vscode_apt_repo_template.replace('.j2', '') }}"
       owner: root
       group: root
       mode: u=rw,g=r,o=r
@@ -47,9 +47,9 @@
       state: present
       name: code
   
-  # vscode.config.settings
+  # vscode_settings
   - when: vscode_settings != None
-    name: Copy {{ vscode_settings }}
+    name: Copy settings to /home/{{ vscode_user }}/.config/Code/User/settings.json
     become: true
     ansible.builtin.copy:
       src: "{{ vscode_settings }}"
@@ -58,9 +58,9 @@
       group: "{{ vscode_user }}"
       mode: u=rw,g=,o=
 
-  # vscode.config.settings
+  # vscode_settings
   - when: vscode_keybindings != None
-    name: Copy {{ vscode_keybindings }}
+    name: Copy keybindings to /home/{{ vscode_user }}/.config/Code/User/keybindings.json
     become: true
     ansible.builtin.copy:
       src: "{{ vscode_keybindings }}"
