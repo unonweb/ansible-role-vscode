@@ -46,7 +46,15 @@
     ansible.builtin.apt:
       state: present
       name: code
-  
+
+  # mkdir for vscode_settings
+  - name: Make sure directory exists /home/{{ vscode_user }}/.config/Code/User
+    become: true
+    ansible.builtin.file:
+      path: "/home/{{ vscode_user }}/.config/Code/User"
+      mode: u=rwx,g=,o=
+      state: directory
+
   # vscode_settings
   - when: vscode_settings != None
     name: Copy settings to /home/{{ vscode_user }}/.config/Code/User/settings.json
