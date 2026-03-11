@@ -1,3 +1,4 @@
 files/frida/*
 !files/frida/settings.json
 !files/frida/keybindings.json
+.ansible/
