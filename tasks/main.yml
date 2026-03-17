@@ -5,7 +5,7 @@
   block:
   
   # mkdir
-  - name: Make sure directory exists {{ vscode_apt_repo_key_dst | dirname }}
+  - name: Make sure directory for key exists {{ vscode_apt_repo_key_dst | dirname }}
     become: true
     ansible.builtin.file:
       path: "{{ vscode_apt_repo_key_dst | dirname }}"
@@ -52,8 +52,10 @@
     become: true
     ansible.builtin.file:
       path: "/home/{{ vscode_user }}/.config/Code/User"
-      mode: u=rwx,g=,o=
       state: directory
+      mode: u=rwx,g=,o=
+      owner: "{{ vscode_user }}"
+      group: "{{ vscode_user }}"
 
   # vscode_settings
   - when: vscode_settings != None
